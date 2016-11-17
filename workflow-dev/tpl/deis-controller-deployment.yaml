@@ -104,6 +104,19 @@ spec:
                 secretKeyRef:
                   name: database-creds
                   key: password
+{{- if env "LOGGER_REDIS_LOCATION" | default .logger_redis_location | eq "off-cluster" }}
+            - name: DEIS_LOGGER_REDIS_DB
+              value: "{{ env "LOGGER_REDIS_DB" | default .loggerRedis.db }}"
+            - name: DEIS_LOGGER_REDIS_SERVICE_HOST
+              value: "{{ env "LOGGER_REDIS_HOST" | default .loggerRedis.host }}"
+            - name: DEIS_LOGGER_REDIS_SERVICE_PORT
+              value: "{{ env "LOGGER_REDIS_PORT" | default .loggerRedis.port }}"
+{{- end }}
+            - name: DEIS_LOGGER_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: logger-redis-creds
+                  key: password
             - name: RESERVED_NAMES
               value: "deis, deis-builder, deis-workflow-manager, grafana"
           volumeMounts:
